@@ -20,6 +20,7 @@
 
   <ItemGroup>
 	<ProjectReference Include="..\..\src\Modular.NET.Core\Modular.NET.Core.csproj" />
+	<ProjectReference Include="..\Modular.NET.Tests\Modular.NET.Tests.csproj" />
   </ItemGroup>
 
 </Project>
