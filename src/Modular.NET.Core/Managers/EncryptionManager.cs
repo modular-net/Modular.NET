@@ -16,12 +16,26 @@ namespace Modular.NET.Core.Managers
         {
             if (publicKey == null)
             {
-                throw new ArgumentNullException(nameof(publicKey));
+                if (Engine.Current?.EncryptionKeyPair?.PublicKey != null)
+                {
+                    publicKey = Engine.Current?.EncryptionKeyPair?.PublicKey;
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(publicKey));
+                }
             }
 
             if (privateKey == null)
             {
-                throw new ArgumentNullException(nameof(privateKey));
+                if (Engine.Current?.EncryptionKeyPair?.PrivateKey != null)
+                {
+                    privateKey = Engine.Current?.EncryptionKeyPair?.PrivateKey;
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(privateKey));
+                }
             }
         }
 

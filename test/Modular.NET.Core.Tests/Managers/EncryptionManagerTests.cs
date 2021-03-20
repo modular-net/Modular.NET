@@ -1,5 +1,9 @@
 ﻿using System;
+using DryIoc;
+using Modular.NET.Core.Interfaces;
 using Modular.NET.Core.Managers;
+using Modular.NET.Core.Tests.TestMaterials.Interfaces;
+using Modular.NET.Tests.Attributes;
 using Modular.NET.Tests.Utilities;
 using Xunit;
 
@@ -73,6 +77,20 @@ namespace Modular.NET.Core.Tests.Managers
                 var base64 = Convert.ToBase64String(Generator.RandomBytes());
                 EncryptionManager.Aes.Decrypt(base64, null, Generator.RandomBytes());
             });
+        }
+
+        [Fact]
+        [TestPriority(100)]
+        public void EncryptionManager_EncyrptionWithCurrent()
+        {
+            Engine.Register<ICurrent, Current>(Reuse.ScopedOrSingleton);
+
+            var randomValue = Generator.RandomString();
+
+            var encrypted = EncryptionManager.Aes.Encrypt(randomValue);
+            var decrypted = EncryptionManager.Aes.Decrypt(encrypted);
+
+            Assert.Equal(randomValue, decrypted);
         }
 
         [Fact]
