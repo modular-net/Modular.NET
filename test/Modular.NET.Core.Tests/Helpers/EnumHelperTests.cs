@@ -15,8 +15,8 @@ namespace Modular.NET.Core.Tests.Helpers
 
             foreach (var each in Enum.GetValues(typeof(EnumGender)))
             {
-                Assert.True(dic.ContainsKey((int) each) && each.ToString()
-                    .Equals(dic[(int) each]));
+                Assert.True(dic.ContainsKey((int) each));
+                Assert.Equal(dic[(int) each], each.ToString());
             }
         }
 
@@ -41,8 +41,8 @@ namespace Modular.NET.Core.Tests.Helpers
                     continue;
                 }
 
-                Assert.True(dic.ContainsKey((int) each) && each.ToString()
-                    .Equals(dic[(int) each]));
+                Assert.True(dic.ContainsKey((int) each));
+                Assert.Equal(dic[(int) each], each.ToString());
             }
         }
 
@@ -62,8 +62,8 @@ namespace Modular.NET.Core.Tests.Helpers
 
             foreach (var each in Enum.GetValues(typeof(EnumGender)))
             {
-                Assert.True(dic.ContainsKey((int) each) && ((Enum) each).GetDescription()
-                    .Equals(dic[(int) each]));
+                Assert.True(dic.ContainsKey((int) each));
+                Assert.Equal(dic[(int) each], ((Enum) each).GetDescription());
             }
         }
 
@@ -88,8 +88,8 @@ namespace Modular.NET.Core.Tests.Helpers
                     continue;
                 }
 
-                Assert.True(dic.ContainsKey((int) each) && ((Enum) each).GetDescription()
-                    .Equals(dic[(int) each]));
+                Assert.True(dic.ContainsKey((int) each));
+                Assert.Equal(dic[(int) each], ((Enum) each).GetDescription());
             }
         }
 
@@ -109,8 +109,8 @@ namespace Modular.NET.Core.Tests.Helpers
 
             foreach (var each in Enum.GetValues(typeof(EnumGender)))
             {
-                Assert.True(dic.ContainsKey((int) each) && ((Enum) each).GetDisplayText()
-                    .Equals(dic[(int) each]));
+                Assert.True(dic.ContainsKey((int) each));
+                Assert.Equal(dic[(int) each], ((Enum) each).GetDisplayText());
             }
         }
 
@@ -135,8 +135,8 @@ namespace Modular.NET.Core.Tests.Helpers
                     continue;
                 }
 
-                Assert.True(dic.ContainsKey((int) each) && ((Enum) each).GetDisplayText()
-                    .Equals(dic[(int) each]));
+                Assert.True(dic.ContainsKey((int) each));
+                Assert.Equal(dic[(int) each], ((Enum) each).GetDisplayText());
             }
         }
 

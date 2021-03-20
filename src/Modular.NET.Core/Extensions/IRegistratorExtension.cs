@@ -21,8 +21,7 @@ public static class IRegistratorExtension
             {
                 try
                 {
-                    var definedTypes = assembly.DefinedTypes;
-                    return true;
+                    return assembly.DefinedTypes != null;
                 }
                 catch
                 {

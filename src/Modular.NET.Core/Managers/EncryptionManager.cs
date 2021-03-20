@@ -78,14 +78,12 @@ namespace Modular.NET.Core.Managers
             public static EncryptionKeyPair GenerateKeyPair()
             {
                 var ret = new EncryptionKeyPair();
-                using (var aes = System.Security.Cryptography.Aes.Create())
-                {
-                    aes.GenerateKey();
-                    ret.PublicKey = aes.Key;
+                using var aes = System.Security.Cryptography.Aes.Create();
+                aes.GenerateKey();
+                ret.PublicKey = aes.Key;
 
-                    aes.GenerateIV();
-                    ret.PrivateKey = aes.IV;
-                }
+                aes.GenerateIV();
+                ret.PrivateKey = aes.IV;
 
                 return ret;
             }
@@ -104,26 +102,20 @@ namespace Modular.NET.Core.Managers
                 ValidateParameters(clearText, ref publicKey, ref privateKey);
 
                 byte[] ret;
-                using (var aes = System.Security.Cryptography.Aes.Create())
+                using var aes = System.Security.Cryptography.Aes.Create();
+                aes.Key = publicKey;
+                aes.IV = privateKey;
+
+                var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+                using var msEncrypt = new MemoryStream();
+                using var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
+                using (var swEncrypt = new StreamWriter(csEncrypt))
                 {
-                    aes.Key = publicKey;
-                    aes.IV = privateKey;
-
-                    var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-
-                    using (var msEncrypt = new MemoryStream())
-                    {
-                        using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                        {
-                            using (var swEncrypt = new StreamWriter(csEncrypt))
-                            {
-                                swEncrypt.Write(clearText);
-                            }
-
-                            ret = msEncrypt.ToArray();
-                        }
-                    }
+                    swEncrypt.Write(clearText);
                 }
+
+                ret = msEncrypt.ToArray();
 
                 return ret;
             }
@@ -146,7 +138,7 @@ namespace Modular.NET.Core.Managers
             ///     Using AES algorithm to encrypt input text.
             /// </summary>
             /// <param name="clearText"></param>
-            /// <param name="key"></param>
+            /// <param name="keyPair"></param>
             /// <returns></returns>
             public static string Encrypt(string clearText,
                 EncryptionKeyPair keyPair)
@@ -172,7 +164,7 @@ namespace Modular.NET.Core.Managers
             ///     Using AES algorithm to encrypt input text with output URL friendly encrypted text.
             /// </summary>
             /// <param name="clearText"></param>
-            /// <param name="key"></param>
+            /// <param name="keyPair"></param>
             /// <returns></returns>
             public static string UrlEncrypt(string clearText,
                 EncryptionKeyPair keyPair)
@@ -183,7 +175,7 @@ namespace Modular.NET.Core.Managers
             /// <summary>
             ///     Using AES algorithm to decrypt input text.
             /// </summary>
-            /// <param name="cipherText"></param>
+            /// <param name="cipherBytes"></param>
             /// <param name="publicKey"></param>
             /// <param name="privateKey"></param>
             /// <returns></returns>
@@ -194,24 +186,16 @@ namespace Modular.NET.Core.Managers
                 ValidateParameters(cipherBytes, ref publicKey, ref privateKey);
 
                 string ret;
-                using (var aes = System.Security.Cryptography.Aes.Create())
-                {
-                    aes.Key = publicKey;
-                    aes.IV = privateKey;
+                using var aes = System.Security.Cryptography.Aes.Create();
+                aes.Key = publicKey;
+                aes.IV = privateKey;
 
-                    var decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+                var decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
 
-                    using (var msDecrypt = new MemoryStream(cipherBytes))
-                    {
-                        using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-                        {
-                            using (var srDecrypt = new StreamReader(csDecrypt))
-                            {
-                                ret = srDecrypt.ReadToEnd();
-                            }
-                        }
-                    }
-                }
+                using var msDecrypt = new MemoryStream(cipherBytes);
+                using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
+                using var srDecrypt = new StreamReader(csDecrypt);
+                ret = srDecrypt.ReadToEnd();
 
                 return ret;
             }
@@ -235,7 +219,7 @@ namespace Modular.NET.Core.Managers
             ///     Using AES algorithm to decrypt input text.
             /// </summary>
             /// <param name="cipherText"></param>
-            /// <param name="key"></param>
+            /// <param name="keyPair"></param>
             /// <returns></returns>
             public static string Decrypt(string cipherText,
                 EncryptionKeyPair keyPair)
@@ -271,7 +255,7 @@ namespace Modular.NET.Core.Managers
             /// </summary>
             /// <typeparam name="T"></typeparam>
             /// <param name="cipherText"></param>
-            /// <param name="key"></param>
+            /// <param name="keyPair"></param>
             /// <returns></returns>
             public static T Decrypt<T>(string cipherText,
                 EncryptionKeyPair keyPair)
@@ -298,7 +282,7 @@ namespace Modular.NET.Core.Managers
             ///     Using AES algorithm to decrypt URL friendly input text.
             /// </summary>
             /// <param name="cipherText"></param>
-            /// <param name="key"></param>
+            /// <param name="keyPair"></param>
             /// <returns></returns>
             public static string UrlDecrypt(string cipherText,
                 EncryptionKeyPair keyPair)
@@ -334,7 +318,7 @@ namespace Modular.NET.Core.Managers
             /// </summary>
             /// <typeparam name="T"></typeparam>
             /// <param name="cipherText"></param>
-            /// <param name="key"></param>
+            /// <param name="keyPair"></param>
             /// <returns></returns>
             public static T UrlDecrypt<T>(string cipherText,
                 EncryptionKeyPair keyPair)
