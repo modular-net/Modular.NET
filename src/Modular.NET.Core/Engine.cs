@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DryIoc;
 using Modular.NET.Core.Interfaces;
+using Modular.NET.Core.Managers;
 
 namespace Modular.NET.Core
 {
@@ -37,6 +38,11 @@ namespace Modular.NET.Core
             {
                 module.ConfigureServices(_Container);
             }
+        }
+
+        public static void Exit()
+        {
+            LogManager.CloseAndFlush();
         }
 
         public static string Diagnostics()
