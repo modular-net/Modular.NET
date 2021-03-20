@@ -96,6 +96,21 @@ namespace Modular.NET.Core
             _Container.Register<TService, TImplementation>(reuse, made, setup, ifAlreadyRegistered, serviceKey);
         }
 
+        public static void Unregister(Type serviceType,
+            object serviceKey = null,
+            FactoryType factoryType = FactoryType.Service,
+            Func<Factory, bool> condition = null)
+        {
+            _Container.Unregister(serviceType, serviceKey, factoryType, condition);
+        }
+
+        public static void Unregister<TService>(object serviceKey = null,
+            FactoryType factoryType = FactoryType.Service,
+            Func<Factory, bool> condition = null)
+        {
+            _Container.Unregister<TService>(serviceKey, factoryType, condition);
+        }
+
         public static object MustResolve(Type serviceType)
         {
             return _Container.Resolve(serviceType);
