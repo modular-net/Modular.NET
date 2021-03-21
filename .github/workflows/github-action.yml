@@ -1,6 +1,7 @@
 name: Build & Analyze
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master ]
   pull_request:
@@ -32,14 +33,12 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
   
-  # dotnet build
-  build:
-    name: Build and SonarCloud Analyze
+  sonarcloud:
+    name: SolnarCloud Analyze
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v2
       with:
         fetch-depth: 0
         
@@ -53,7 +52,16 @@ jobs:
           -Dsonar.organization=modular
           -Dsonar.projectKey=modular-net_Modular.NET
           -X
-        
+  
+  # dotnet build
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
