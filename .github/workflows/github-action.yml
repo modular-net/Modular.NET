@@ -1,4 +1,4 @@
-name: .NET
+name: Build & Analyze
 
 on:
   push:
@@ -48,6 +48,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.organization=modular
+          -Dsonar.projectKey=modular-net_Modular.NET
+          -X
         
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
