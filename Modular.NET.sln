@@ -13,11 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F6C58C7C-DA8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{84F759F7-DC06-48AA-9659-F533430C4256}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modular.NET.Core", "src\Modular.NET.Core\Modular.NET.Core.csproj", "{98E3BC5E-9A3A-4109-880E-D7ADC284ED04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modular.NET.Core", "src\Modular.NET.Core\Modular.NET.Core.csproj", "{98E3BC5E-9A3A-4109-880E-D7ADC284ED04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modular.NET.Core.Tests", "test\Modular.NET.Core.Tests\Modular.NET.Core.Tests.csproj", "{CBC7090A-D0DF-4395-BACA-2DE913F49463}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modular.NET.Core.Tests", "test\Modular.NET.Core.Tests\Modular.NET.Core.Tests.csproj", "{CBC7090A-D0DF-4395-BACA-2DE913F49463}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modular.NET.Tests", "test\Modular.NET.Tests\Modular.NET.Tests.csproj", "{646DA09B-66D9-4329-B6C8-6FF2BCD0FA4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modular.NET.Tests", "test\Modular.NET.Tests\Modular.NET.Tests.csproj", "{646DA09B-66D9-4329-B6C8-6FF2BCD0FA4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

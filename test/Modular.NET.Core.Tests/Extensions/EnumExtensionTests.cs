@@ -1,4 +1,5 @@
-﻿using Modular.NET.Core.Tests.TestMaterials.Enums;
+﻿using System;
+using Modular.NET.Core.Tests.TestMaterials.Enums;
 using Xunit;
 
 namespace Modular.NET.Core.Tests.Extensions

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using Modular.NET.Core.Attributes;
 
 // ReSharper disable once CheckNamespace
@@ -9,34 +10,21 @@ public static class EnumExtension
 
     public static string GetDescription(this Enum enumValue)
     {
-        var type = enumValue.GetType();
-        var memberInfo = type.GetMember(enumValue.ToString());
-        if (memberInfo.Length <= 0)
-        {
-            return enumValue.ToString();
-        }
-
-        var attributes = memberInfo[0]
+        var attributes = enumValue.GetType()
+            .GetMember(enumValue.ToString())
+            .First()
             .GetCustomAttributes(typeof(DescriptionAttribute), false);
 
-        if (attributes.Length > 0)
-        {
-            return ((DescriptionAttribute) attributes[0]).Description;
-        }
-
-        return enumValue.ToString();
+        return attributes.Length > 0
+            ? ((DescriptionAttribute) attributes[0]).Description
+            : enumValue.ToString();
     }
 
     public static string GetDisplayText(this Enum enumValue)
     {
-        var type = enumValue.GetType();
-        var memberInfo = type.GetMember(enumValue.ToString());
-        if (memberInfo.Length <= 0)
-        {
-            return enumValue.ToString();
-        }
-
-        var attributes = memberInfo[0]
+        var attributes = enumValue.GetType()
+            .GetMember(enumValue.ToString())
+            .First()
             .GetCustomAttributes(typeof(DisplayTextAttribute), false);
 
         return attributes.Length > 0
