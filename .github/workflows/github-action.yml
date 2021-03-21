@@ -17,8 +17,15 @@ jobs:
       semVer: ${{ steps.gitversion.outputs.semVer }}
       
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - name: Install GitTools
         uses: gittools/actions/gitversion/setup@v0.9.9
+        with:
+          versionSpec: '5.x'
         
       - name: Determine Version
         id: gitversion
