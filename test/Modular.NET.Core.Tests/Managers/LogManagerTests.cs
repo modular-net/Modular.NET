@@ -1,6 +1,7 @@
 ﻿using System;
 using Modular.NET.Core.Managers;
 using Modular.NET.Core.Tests.TestUtilities;
+using Modular.NET.Tests.Attributes;
 using Modular.NET.Tests.Utilities;
 using Serilog;
 using Serilog.Events;
@@ -9,6 +10,7 @@ using Xunit;
 
 namespace Modular.NET.Core.Tests.Managers
 {
+    [TestCaseOrderer("Modular.NET.Tests.Orderers.TestPriorityOrderer", "Modular.NET.Tests")]
     public class LogManagerTests
     {
         #region Constructors
@@ -23,6 +25,22 @@ namespace Modular.NET.Core.Tests.Managers
         #endregion
 
         #region Methods
+
+        [Fact]
+        [TestPriority(1000)]
+        public void LogManager_CloseAndFlush()
+        {
+            var randomString = Generator.RandomString();
+
+            LogManager_WriteVerbose();
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                LogManager.CloseAndFlush();
+
+                LogManager.Verbose(randomString);
+            });
+        }
 
         [Fact]
         public void LogManager_WriteVerbose()

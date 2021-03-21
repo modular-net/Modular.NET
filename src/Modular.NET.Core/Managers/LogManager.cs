@@ -37,6 +37,7 @@ namespace Modular.NET.Core.Managers
 
         public static void CloseAndFlush()
         {
+            _Logger = null;
             Log.CloseAndFlush();
         }
 

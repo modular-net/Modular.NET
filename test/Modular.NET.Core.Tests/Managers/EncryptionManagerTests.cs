@@ -9,6 +9,7 @@ using Xunit;
 
 namespace Modular.NET.Core.Tests.Managers
 {
+    [TestCaseOrderer("Modular.NET.Tests.Orderers.TestPriorityOrderer", "Modular.NET.Tests")]
     public class EncryptionManagerTests
     {
         #region Static Fields and Constants
@@ -80,7 +81,7 @@ namespace Modular.NET.Core.Tests.Managers
         }
 
         [Fact]
-        [TestPriority(100)]
+        [TestPriority(1000)]
         public void EncryptionManager_EncyrptionWithCurrent()
         {
             Engine.Register<ICurrent, Current>(Reuse.ScopedOrSingleton);
