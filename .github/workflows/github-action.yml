@@ -95,7 +95,7 @@ jobs:
       shell: bash
       run: |
         mkdir -p .\.sonar\scanner
-        dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner --global
+        dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
         cd .\.sonar\scanner
         ls
         
