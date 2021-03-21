@@ -18,11 +18,11 @@ jobs:
       
     steps:
       - name: Install GitTools
-        uses: gittools/actions/gitversion/setup@latest
+        uses: gittools/actions/gitversion/setup@v0.9.9
         
       - name: Determine Version
         id: gitversion
-        uses: gittools/actions/gitversion/execute@latest
+        uses: gittools/actions/gitversion/execute@v0.9.9
 
       - name: Display GitVersion outputs
         run: |
