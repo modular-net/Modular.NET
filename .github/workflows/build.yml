@@ -31,31 +31,6 @@ jobs:
         id: gitversion
         uses: gittools/actions/gitversion/execute@v0.9.9
         
-  # GitHub CodeQL analyze
-  analyze:
-    name: CodeQL Analyze
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        language: ['csharp']
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
-      with:
-        languages: ${{ matrix.language }}
-      
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v1
-      
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
-
   # Build, Test and SonarCloud Analyze
   build:
     name: Build, Test and SonarCloud Analyze
