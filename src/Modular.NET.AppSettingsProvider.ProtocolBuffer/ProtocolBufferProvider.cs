@@ -1,71 +1,109 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Modular.NET.AppSettingsProvider.ProtocolBuffer.Configurations;
+using Modular.NET.AppSettingsProvider.ProtocolBuffer.Constants;
+using Modular.NET.AppSettingsProvider.ProtocolBuffer.Protos;
 using Modular.NET.Core.Interfaces;
 using Modular.NET.Core.Managers;
-using Modular.NET.Core.Security;
+using Newtonsoft.Json;
+using ProtoBuf;
 
-namespace Modular.NET.Core.Tests.TestMaterials.Providers
+namespace Modular.NET.AppSettingsProvider.ProtocolBuffer
 {
-    public class AppSettingsProvider : IAppSettingsProvider
+    public class ProtocolBufferProvider : IAppSettingsProvider
     {
-        #region Static Fields and Constants
-
-        private static Dictionary<string, object> _Storage = new Dictionary<string, object>();
-
-        #endregion
-
         #region Fields, Properties and Indexers
 
-        public static EncryptionKeyPair EncryptionKeyPair { get; set; }
+        private static AppSettingsCollectionProto _Collections { get; set; }
+
+        private static DateTime? _LastLoadedOnUtc { get; set; }
 
         #endregion
 
         #region Static Methods
 
+        private static void Load()
+        {
+            if (_Collections != null && _LastLoadedOnUtc.HasValue && DateTime.UtcNow.Subtract(_LastLoadedOnUtc.Value) <
+                ProtocolBufferConfiguration.CacheDuration)
+            {
+                return;
+            }
+
+            using var file = File.Open(ProtocolBufferConfiguration.Location, FileMode.OpenOrCreate);
+            _Collections = Serializer.Deserialize<AppSettingsCollectionProto>(file);
+            _LastLoadedOnUtc = DateTime.UtcNow;
+        }
+
+        private static void Compose()
+        {
+            using var file = File.Open(ProtocolBufferConfiguration.Location, FileMode.OpenOrCreate);
+            Serializer.Serialize(file, _Collections);
+        }
+
         private static T Get<T>(string key,
             bool isEncrypted = false)
         {
-            if (!_Storage.ContainsKey(key))
+            Validate(key, isEncrypted);
+
+            Load();
+
+            var item = _Collections.Items.FirstOrDefault(x => x.Key.Equals(key));
+
+            if (item == null)
             {
                 return default;
             }
 
-            if (!isEncrypted)
-            {
-                return (T) _Storage[key];
-            }
-
-            return EncryptionManager.Aes.Decrypt<T>((string) _Storage[key], EncryptionKeyPair);
-        }
-
-        private static bool Set(string key,
-            object value,
-            bool isEncrypted = false)
-        {
-            if (!_Storage.ContainsKey(key))
-            {
-                _Storage.Add(key, isEncrypted
-                    ? EncryptionManager.Aes.Encrypt(value.ToString(), EncryptionKeyPair)
-                    : value);
-            }
-            else
-            {
-                _Storage[key] = isEncrypted
-                    ? EncryptionManager.Aes.Encrypt(value.ToString(), EncryptionKeyPair)
-                    : value;
-            }
-
-            return true;
+            return !isEncrypted
+                ? JsonConvert.DeserializeObject<T>(item.Value)
+                : EncryptionManager.Aes.Decrypt<T>(item.Value, ProtocolBufferConfiguration.EncryptionKeyPair);
         }
 
         private static async Task<T> GetAsync<T>(string key,
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await Task.Run(() => Get<T>(key, isEncrypted), cancellationToken)
-                .ConfigureAwait(false);
+            return await Task.Run(() => Get<T>(key, isEncrypted), cancellationToken);
+        }
+
+        private static bool Set(string key,
+            object value,
+            bool isEncrypted = false)
+        {
+            Validate(key, isEncrypted);
+
+            Load();
+
+            var strValue = isEncrypted && value is string
+                ? value.ToString()
+                : JsonConvert.SerializeObject(value);
+            var item = _Collections.Items.FirstOrDefault(x => x.Key.Equals(key));
+
+            if (item == null)
+            {
+                _Collections.Items.Add(new AppSettingsProto
+                {
+                    Key = key,
+                    Value = isEncrypted
+                        ? EncryptionManager.Aes.Encrypt(strValue, ProtocolBufferConfiguration.EncryptionKeyPair)
+                        : strValue
+                });
+            }
+            else
+            {
+                item.Value = isEncrypted
+                    ? EncryptionManager.Aes.Encrypt(strValue, ProtocolBufferConfiguration.EncryptionKeyPair)
+                    : strValue;
+            }
+
+            Compose();
+
+            return true;
         }
 
         private static async Task<bool> SetAsync(string key,
@@ -73,8 +111,22 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await Task.Run(() => Set(key, value, isEncrypted), cancellationToken)
-                .ConfigureAwait(false);
+            return await Task.Run(() => Set(key, value, isEncrypted), cancellationToken);
+        }
+
+        [SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Local")]
+        private static void Validate(string key,
+            bool isEncrypted)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new InvalidOperationException(ErrorMessage.AppSettingsKeyAreNotAllowedToBeNullOrEmpty);
+            }
+
+            if (isEncrypted && ProtocolBufferConfiguration.EncryptionKeyPair == null)
+            {
+                throw new InvalidOperationException(ErrorMessage.NoEncryptionKeyPairHasBeenSet);
+            }
         }
 
         #endregion
@@ -83,7 +135,9 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
 
         public bool ClearSettings()
         {
-            _Storage = new Dictionary<string, object>();
+            _Collections = new AppSettingsCollectionProto();
+            _LastLoadedOnUtc = null;
+            File.Delete(ProtocolBufferConfiguration.Location);
             return true;
         }
 
@@ -117,7 +171,13 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
         public DateTime? GetDateTime(string key,
             bool isEncrypted = false)
         {
-            return Get<DateTime?>(key, isEncrypted);
+            var strValue = Get<string>(key, isEncrypted);
+            if (string.IsNullOrEmpty(strValue))
+            {
+                return null;
+            }
+
+            return DateTime.ParseExact(strValue, "O", null);
         }
 
         public decimal? GetDecimal(string key,
@@ -136,17 +196,13 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             T defaultValue,
             bool isEncrypted = false) where T : Enum
         {
-            if (!_Storage.ContainsKey(key))
+            var strValue = Get<string>(key, isEncrypted);
+            if (string.IsNullOrEmpty(strValue))
             {
                 return defaultValue;
             }
 
-            if (!isEncrypted)
-            {
-                return (T) _Storage[key];
-            }
-
-            return EncryptionManager.Aes.Decrypt<T>((string) _Storage[key], EncryptionKeyPair);
+            return (T)Enum.Parse(typeof(T), strValue);
         }
 
         public float? GetFloat(string key,
@@ -218,7 +274,8 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             DateTime value,
             bool isEncrypted = false)
         {
-            return Set(key, value, isEncrypted);
+            var strValue = value.ToString("O");
+            return Set(key, strValue, isEncrypted);
         }
 
         public bool SetDecimal(string key,
@@ -286,24 +343,21 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
 
         public async Task<bool> ClearSettingsAsync(CancellationToken cancellationToken = default)
         {
-            return await Task.Run(ClearSettings, cancellationToken)
-                .ConfigureAwait(false);
+            return await Task.Run(ClearSettings, cancellationToken);
         }
 
         public async Task<bool?> GetBooleanAsync(string key,
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAsync<bool?>(key, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await GetAsync<bool?>(key, isEncrypted, cancellationToken);
         }
 
         public async Task<byte?> GetByteAsync(string key,
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            var base64 = await GetAsync<string>(key, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            var base64 = await GetAsync<string>(key, isEncrypted, cancellationToken);
             if (string.IsNullOrEmpty(base64))
             {
                 return null;
@@ -316,8 +370,7 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            var base64 = await GetAsync<string>(key, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            var base64 = await GetAsync<string>(key, isEncrypted, cancellationToken);
             return !string.IsNullOrEmpty(base64)
                 ? Convert.FromBase64String(base64)
                 : null;
@@ -327,24 +380,27 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAsync<DateTime?>(key, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            var strValue = await GetAsync<string>(key, isEncrypted, cancellationToken);
+            if (string.IsNullOrEmpty(strValue))
+            {
+                return null;
+            }
+
+            return DateTime.ParseExact(strValue, "O", null);
         }
 
         public async Task<decimal?> GetDecimalAsync(string key,
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAsync<decimal?>(key, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await GetAsync<decimal?>(key, isEncrypted, cancellationToken);
         }
 
         public async Task<double?> GetDoubleAsync(string key,
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAsync<double?>(key, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await GetAsync<double?>(key, isEncrypted, cancellationToken);
         }
 
         public async Task<T> GetEnumAsync<T>(string key,
@@ -352,64 +408,62 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default) where T : Enum
         {
-            return await Task.Run(() => GetEnum(key, defaultValue, isEncrypted), cancellationToken)
-                .ConfigureAwait(false);
+            var strValue = await GetAsync<string>(key, isEncrypted, cancellationToken);
+            if (string.IsNullOrEmpty(strValue))
+            {
+                return defaultValue;
+            }
+
+            return (T)Enum.Parse(typeof(T), strValue);
         }
 
         public async Task<float?> GetFloatAsync(string key,
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAsync<float?>(key, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await GetAsync<float?>(key, isEncrypted, cancellationToken);
         }
 
         public async Task<int?> GetIntAsync(string key,
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAsync<int?>(key, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await GetAsync<int?>(key, isEncrypted, cancellationToken);
         }
 
         public async Task<long?> GetLongAsync(string key,
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAsync<long?>(key, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await GetAsync<long?>(key, isEncrypted, cancellationToken);
         }
 
         public async Task<object> GetObjectAsync(string key,
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAsync<object>(key, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await GetAsync<object>(key, isEncrypted, cancellationToken);
         }
 
         public async Task<T> GetObjectAsync<T>(string key,
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAsync<T>(key, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await GetAsync<T>(key, isEncrypted, cancellationToken);
         }
 
         public async Task<short?> GetShortAsync(string key,
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAsync<short?>(key, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await GetAsync<short?>(key, isEncrypted, cancellationToken);
         }
 
         public async Task<string> GetStringAsync(string key,
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAsync<string>(key, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await GetAsync<string>(key, isEncrypted, cancellationToken);
         }
 
         public async Task<bool> SetBooleanAsync(string key,
@@ -417,8 +471,7 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await SetAsync(key, value, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await SetAsync(key, value, isEncrypted, cancellationToken);
         }
 
         public async Task<bool> SetByteAsync(string key,
@@ -427,8 +480,7 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             CancellationToken cancellationToken = default)
         {
             var base64 = Convert.ToBase64String(new[] { value });
-            return await SetAsync(key, base64, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await SetAsync(key, base64, isEncrypted, cancellationToken);
         }
 
         public async Task<bool> SetBytesAsync(string key,
@@ -437,8 +489,7 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             CancellationToken cancellationToken = default)
         {
             var base64 = Convert.ToBase64String(value);
-            return await SetAsync(key, base64, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await SetAsync(key, base64, isEncrypted, cancellationToken);
         }
 
         public async Task<bool> SetDateTimeAsync(string key,
@@ -446,8 +497,8 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await SetAsync(key, value, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            var strValue = value.ToString("O");
+            return await SetAsync(key, strValue, isEncrypted, cancellationToken);
         }
 
         public async Task<bool> SetDecimalAsync(string key,
@@ -455,8 +506,7 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await SetAsync(key, value, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await SetAsync(key, value, isEncrypted, cancellationToken);
         }
 
         public async Task<bool> SetDoubleAsync(string key,
@@ -464,8 +514,7 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await SetAsync(key, value, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await SetAsync(key, value, isEncrypted, cancellationToken);
         }
 
         public async Task<bool> SetEnumAsync<T>(string key,
@@ -473,8 +522,7 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default) where T : Enum
         {
-            return await SetAsync(key, value, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await SetAsync(key, value, isEncrypted, cancellationToken);
         }
 
         public async Task<bool> SetFloatAsync(string key,
@@ -482,8 +530,7 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await SetAsync(key, value, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await SetAsync(key, value, isEncrypted, cancellationToken);
         }
 
         public async Task<bool> SetIntAsync(string key,
@@ -491,8 +538,7 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await SetAsync(key, value, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await SetAsync(key, value, isEncrypted, cancellationToken);
         }
 
         public async Task<bool> SetLongAsync(string key,
@@ -500,8 +546,7 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await SetAsync(key, value, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await SetAsync(key, value, isEncrypted, cancellationToken);
         }
 
         public async Task<bool> SetObjectAsync(string key,
@@ -509,8 +554,7 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await SetAsync(key, value, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await SetAsync(key, value, isEncrypted, cancellationToken);
         }
 
         public async Task<bool> SetShortAsync(string key,
@@ -518,8 +562,7 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await SetAsync(key, value, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await SetAsync(key, value, isEncrypted, cancellationToken);
         }
 
         public async Task<bool> SetStringAsync(string key,
@@ -527,8 +570,7 @@ namespace Modular.NET.Core.Tests.TestMaterials.Providers
             bool isEncrypted = false,
             CancellationToken cancellationToken = default)
         {
-            return await SetAsync(key, value, isEncrypted, cancellationToken)
-                .ConfigureAwait(false);
+            return await SetAsync(key, value, isEncrypted, cancellationToken);
         }
 
         #endregion

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Modular.NET.Core.Interfaces
 {
@@ -102,6 +104,130 @@ namespace Modular.NET.Core.Interfaces
         bool SetString(string key,
             string value,
             bool isEncrypted = false);
+
+        Task<bool> ClearSettingsAsync(CancellationToken cancellationToken = default);
+
+        Task<bool?> GetBooleanAsync(string key,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<byte?> GetByteAsync(string key,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<byte[]> GetBytesAsync(string key,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<DateTime?> GetDateTimeAsync(string key,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<decimal?> GetDecimalAsync(string key,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<double?> GetDoubleAsync(string key,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<T> GetEnumAsync<T>(string key,
+            T defaultValue,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default) where T : Enum;
+
+        Task<float?> GetFloatAsync(string key,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<int?> GetIntAsync(string key,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<long?> GetLongAsync(string key,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<object> GetObjectAsync(string key,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<T> GetObjectAsync<T>(string key,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<short?> GetShortAsync(string key,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<string> GetStringAsync(string key,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> SetBooleanAsync(string key,
+            bool value,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> SetByteAsync(string key,
+            byte value,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> SetBytesAsync(string key,
+            byte[] value,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> SetDateTimeAsync(string key,
+            DateTime value,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> SetDecimalAsync(string key,
+            decimal value,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> SetDoubleAsync(string key,
+            double value,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> SetEnumAsync<T>(string key,
+            T value,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default) where T : Enum;
+
+        Task<bool> SetFloatAsync(string key,
+            float value,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> SetIntAsync(string key,
+            int value,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> SetLongAsync(string key,
+            long value,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> SetObjectAsync(string key,
+            object value,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> SetShortAsync(string key,
+            short value,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> SetStringAsync(string key,
+            string value,
+            bool isEncrypted = false,
+            CancellationToken cancellationToken = default);
 
         #endregion
     }
