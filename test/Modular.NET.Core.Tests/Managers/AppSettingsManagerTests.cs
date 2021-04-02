@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Modular.NET.Core.Interfaces;
 using Modular.NET.Core.Managers;
 using Modular.NET.Core.Tests.TestMaterials.Enums;
@@ -572,9 +573,555 @@ namespace Modular.NET.Core.Tests.Managers
 
                 Assert.Equal(randomValue, AppSettingsManager.GetString(randomKey, randomValue));
             }
-
-            #endregion
         }
+
+        [Fact]
+        public async Task AppSettingsManager_BooleanAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomBoolean();
+
+                Assert.Null(await AppSettingsManager.GetBooleanAsync(randomKey));
+
+                Assert.False(await AppSettingsManager.SetBooleanAsync(randomKey, randomValue));
+
+                Assert.Null(await AppSettingsManager.GetBooleanAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_BooleanAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomBoolean();
+
+                Assert.Null(await AppSettingsManager.GetBooleanAsync(randomKey, true));
+
+                Assert.False(await AppSettingsManager.SetBooleanAsync(randomKey, randomValue, true));
+
+                Assert.Null(await AppSettingsManager.GetBooleanAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_BooleanAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomBoolean();
+
+                Assert.Null(await AppSettingsManager.GetBooleanAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetBooleanAsync(randomKey, randomValue, false));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_ByteAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomByte();
+
+                Assert.Null(await AppSettingsManager.GetByteAsync(randomKey));
+
+                Assert.False(await AppSettingsManager.SetByteAsync(randomKey, randomValue));
+
+                Assert.Null(await AppSettingsManager.GetByteAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_ByteAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomByte();
+
+                Assert.Null(await AppSettingsManager.GetByteAsync(randomKey, true));
+
+                Assert.False(await AppSettingsManager.SetByteAsync(randomKey, randomValue, true));
+
+                Assert.Null(await AppSettingsManager.GetByteAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_ByteAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomByte();
+
+                Assert.Null(await AppSettingsManager.GetByteAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetByteAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_BytesAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomBytes();
+
+                Assert.Null(await AppSettingsManager.GetBytesAsync(randomKey));
+
+                Assert.False(await AppSettingsManager.SetBytesAsync(randomKey, randomValue));
+
+                Assert.Null(await AppSettingsManager.GetBytesAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_BytesAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomBytes();
+
+                Assert.Null(await AppSettingsManager.GetBytesAsync(randomKey, true));
+
+                Assert.False(await AppSettingsManager.SetBytesAsync(randomKey, randomValue, true));
+
+                Assert.Null(await AppSettingsManager.GetBytesAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_BytesAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomBytes();
+
+                Assert.Null(await AppSettingsManager.GetBytesAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetBytesAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DateTimeAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDateTime();
+
+                Assert.Null(await AppSettingsManager.GetDateTimeAsync(randomKey));
+
+                Assert.False(await AppSettingsManager.SetDateTimeAsync(randomKey, randomValue));
+
+                Assert.Null(await AppSettingsManager.GetDateTimeAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DateTimeAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDateTime();
+
+                Assert.Null(await AppSettingsManager.GetDateTimeAsync(randomKey, true));
+
+                Assert.False(await AppSettingsManager.SetDateTimeAsync(randomKey, randomValue, true));
+
+                Assert.Null(await AppSettingsManager.GetDateTimeAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DateTimeAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDateTime();
+
+                Assert.Null(await AppSettingsManager.GetDateTimeAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetDateTimeAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DecimalAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDecimal();
+
+                Assert.Null(await AppSettingsManager.GetDecimalAsync(randomKey));
+
+                Assert.False(await AppSettingsManager.SetDecimalAsync(randomKey, randomValue));
+
+                Assert.Null(await AppSettingsManager.GetDecimalAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DecimalAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDecimal();
+
+                Assert.Null(await AppSettingsManager.GetDecimalAsync(randomKey, true));
+
+                Assert.False(await AppSettingsManager.SetDecimalAsync(randomKey, randomValue, true));
+
+                Assert.Null(await AppSettingsManager.GetDecimalAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DecimalAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDecimal();
+
+                Assert.Null(await AppSettingsManager.GetDecimalAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetDecimalAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DoubleAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDouble();
+
+                Assert.Null(await AppSettingsManager.GetDoubleAsync(randomKey));
+
+                Assert.False(await AppSettingsManager.SetDoubleAsync(randomKey, randomValue));
+
+                Assert.Null(await AppSettingsManager.GetDoubleAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DoubleAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDouble();
+
+                Assert.Null(await AppSettingsManager.GetDoubleAsync(randomKey, true));
+
+                Assert.False(await AppSettingsManager.SetDoubleAsync(randomKey, randomValue, true));
+
+                Assert.Null(await AppSettingsManager.GetDoubleAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DoubleAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDouble();
+
+                Assert.Null(await AppSettingsManager.GetDoubleAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetDoubleAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_EnumAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomDefaultValue = (EnumGender) Generator.RandomInt(0, Enum.GetValues(typeof(EnumGender))
+                    .Length);
+                var randomValue = (EnumGender) Generator.RandomInt(0, Enum.GetValues(typeof(EnumGender))
+                    .Length);
+
+                Assert.Equal(randomDefaultValue, await AppSettingsManager.GetEnumAsync(randomKey, randomDefaultValue));
+
+                Assert.False(await AppSettingsManager.SetEnumAsync(randomKey, randomValue));
+
+                Assert.Equal(randomDefaultValue, await AppSettingsManager.GetEnumAsync(randomKey, randomDefaultValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_EnumAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomDefaultValue = (EnumGender) Generator.RandomInt(0, Enum.GetValues(typeof(EnumGender))
+                    .Length);
+                var randomValue = (EnumGender) Generator.RandomInt(0, Enum.GetValues(typeof(EnumGender))
+                    .Length);
+
+                Assert.Equal(randomDefaultValue,
+                    await AppSettingsManager.GetEnumAsync(randomKey, randomDefaultValue, true));
+
+                Assert.False(await AppSettingsManager.SetEnumAsync(randomKey, randomValue, true));
+
+                Assert.Equal(randomDefaultValue,
+                    await AppSettingsManager.GetEnumAsync(randomKey, randomDefaultValue, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_FloatAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomFloat();
+
+                Assert.Null(await AppSettingsManager.GetFloatAsync(randomKey));
+
+                Assert.False(await AppSettingsManager.SetFloatAsync(randomKey, randomValue));
+
+                Assert.Null(await AppSettingsManager.GetFloatAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_FloatAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomFloat();
+
+                Assert.Null(await AppSettingsManager.GetFloatAsync(randomKey, true));
+
+                Assert.False(await AppSettingsManager.SetFloatAsync(randomKey, randomValue, true));
+
+                Assert.Null(await AppSettingsManager.GetFloatAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_FloatAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomFloat();
+
+                Assert.Null(await AppSettingsManager.GetFloatAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetFloatAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_IntAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomInt();
+
+                Assert.Null(await AppSettingsManager.GetIntAsync(randomKey));
+
+                Assert.False(await AppSettingsManager.SetIntAsync(randomKey, randomValue));
+
+                Assert.Null(await AppSettingsManager.GetIntAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_IntAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomInt();
+
+                Assert.Null(await AppSettingsManager.GetIntAsync(randomKey, true));
+
+                Assert.False(await AppSettingsManager.SetIntAsync(randomKey, randomValue, true));
+
+                Assert.Null(await AppSettingsManager.GetIntAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_IntAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomInt();
+
+                Assert.Null(await AppSettingsManager.GetIntAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetIntAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_LongAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomLong();
+
+                Assert.Null(await AppSettingsManager.GetLongAsync(randomKey));
+
+                Assert.False(await AppSettingsManager.SetLongAsync(randomKey, randomValue));
+
+                Assert.Null(await AppSettingsManager.GetLongAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_LongAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomLong();
+
+                Assert.Null(await AppSettingsManager.GetLongAsync(randomKey, true));
+
+                Assert.False(await AppSettingsManager.SetLongAsync(randomKey, randomValue, true));
+
+                Assert.Null(await AppSettingsManager.GetLongAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_LongAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomLong();
+
+                Assert.Null(await AppSettingsManager.GetLongAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetLongAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_ShortAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomShort();
+
+                Assert.Null(await AppSettingsManager.GetShortAsync(randomKey));
+
+                Assert.False(await AppSettingsManager.SetShortAsync(randomKey, randomValue));
+
+                Assert.Null(await AppSettingsManager.GetShortAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_ShortAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomShort();
+
+                Assert.Null(await AppSettingsManager.GetShortAsync(randomKey, true));
+
+                Assert.False(await AppSettingsManager.SetShortAsync(randomKey, randomValue, true));
+
+                Assert.Null(await AppSettingsManager.GetShortAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_ShortAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomShort();
+
+                Assert.Null(await AppSettingsManager.GetShortAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetShortAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_StringAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomString();
+
+                Assert.Null(await AppSettingsManager.GetStringAsync(randomKey));
+
+                Assert.False(await AppSettingsManager.SetStringAsync(randomKey, randomValue));
+
+                Assert.Null(await AppSettingsManager.GetStringAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_StringAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomString();
+
+                Assert.Null(await AppSettingsManager.GetStringAsync(randomKey, true));
+
+                Assert.False(await AppSettingsManager.SetStringAsync(randomKey, randomValue, true));
+
+                Assert.Null(await AppSettingsManager.GetStringAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_StringAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomString();
+
+                Assert.Null(await AppSettingsManager.GetStringAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetStringAsync(randomKey, randomValue));
+            }
+        }
+
+        #endregion
     }
 
     [Collection("AppSettingsManager")]
@@ -1140,6 +1687,551 @@ namespace Modular.NET.Core.Tests.Managers
                 Assert.Null(AppSettingsManager.GetString(randomKey));
 
                 Assert.Equal(randomValue, AppSettingsManager.GetString(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_BooleanAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomBoolean();
+
+                Assert.Null(await AppSettingsManager.GetBooleanAsync(randomKey));
+
+                Assert.True(await AppSettingsManager.SetBooleanAsync(randomKey, randomValue));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetBooleanAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_BooleanAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomBoolean();
+
+                Assert.Null(await AppSettingsManager.GetBooleanAsync(randomKey, true));
+
+                Assert.True(await AppSettingsManager.SetBooleanAsync(randomKey, randomValue, true));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetBooleanAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_BooleanAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomBoolean();
+
+                Assert.Null(await AppSettingsManager.GetBooleanAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetBooleanAsync(randomKey, randomValue, false));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_ByteAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomByte();
+
+                Assert.Null(await AppSettingsManager.GetByteAsync(randomKey));
+
+                Assert.True(await AppSettingsManager.SetByteAsync(randomKey, randomValue));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetByteAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_ByteAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomByte();
+
+                Assert.Null(await AppSettingsManager.GetByteAsync(randomKey, true));
+
+                Assert.True(await AppSettingsManager.SetByteAsync(randomKey, randomValue, true));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetByteAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_ByteAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomByte();
+
+                Assert.Null(await AppSettingsManager.GetByteAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetByteAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_BytesAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomBytes();
+
+                Assert.Null(await AppSettingsManager.GetBytesAsync(randomKey));
+
+                Assert.True(await AppSettingsManager.SetBytesAsync(randomKey, randomValue));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetBytesAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_BytesAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomBytes();
+
+                Assert.Null(await AppSettingsManager.GetBytesAsync(randomKey, true));
+
+                Assert.True(await AppSettingsManager.SetBytesAsync(randomKey, randomValue, true));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetBytesAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_BytesAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomBytes();
+
+                Assert.Null(await AppSettingsManager.GetBytesAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetBytesAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DateTimeAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDateTime();
+
+                Assert.Null(await AppSettingsManager.GetDateTimeAsync(randomKey));
+
+                Assert.True(await AppSettingsManager.SetDateTimeAsync(randomKey, randomValue));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetDateTimeAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DateTimeAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDateTime();
+
+                Assert.Null(await AppSettingsManager.GetDateTimeAsync(randomKey, true));
+
+                Assert.True(await AppSettingsManager.SetDateTimeAsync(randomKey, randomValue, true));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetDateTimeAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DateTimeAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDateTime();
+
+                Assert.Null(await AppSettingsManager.GetDateTimeAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetDateTimeAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DecimalAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDecimal();
+
+                Assert.Null(await AppSettingsManager.GetDecimalAsync(randomKey));
+
+                Assert.True(await AppSettingsManager.SetDecimalAsync(randomKey, randomValue));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetDecimalAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DecimalAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDecimal();
+
+                Assert.Null(await AppSettingsManager.GetDecimalAsync(randomKey, true));
+
+                Assert.True(await AppSettingsManager.SetDecimalAsync(randomKey, randomValue, true));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetDecimalAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DecimalAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDecimal();
+
+                Assert.Null(await AppSettingsManager.GetDecimalAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetDecimalAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DoubleAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDouble();
+
+                Assert.Null(await AppSettingsManager.GetDoubleAsync(randomKey));
+
+                Assert.True(await AppSettingsManager.SetDoubleAsync(randomKey, randomValue));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetDoubleAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DoubleAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDouble();
+
+                Assert.Null(await AppSettingsManager.GetDoubleAsync(randomKey, true));
+
+                Assert.True(await AppSettingsManager.SetDoubleAsync(randomKey, randomValue, true));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetDoubleAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_DoubleAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomDouble();
+
+                Assert.Null(await AppSettingsManager.GetDoubleAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetDoubleAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_EnumAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomDefaultValue = (EnumGender) Generator.RandomInt(0, Enum.GetValues(typeof(EnumGender))
+                    .Length);
+                var randomValue = (EnumGender) Generator.RandomInt(0, Enum.GetValues(typeof(EnumGender))
+                    .Length);
+
+                Assert.Equal(randomDefaultValue, await AppSettingsManager.GetEnumAsync(randomKey, randomDefaultValue));
+
+                Assert.True(await AppSettingsManager.SetEnumAsync(randomKey, randomValue));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetEnumAsync(randomKey, randomDefaultValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_EnumAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomDefaultValue = (EnumGender) Generator.RandomInt(0, Enum.GetValues(typeof(EnumGender))
+                    .Length);
+                var randomValue = (EnumGender) Generator.RandomInt(0, Enum.GetValues(typeof(EnumGender))
+                    .Length);
+
+                Assert.Equal(randomDefaultValue,
+                    await AppSettingsManager.GetEnumAsync(randomKey, randomDefaultValue, true));
+
+                Assert.True(await AppSettingsManager.SetEnumAsync(randomKey, randomValue, true));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetEnumAsync(randomKey, randomDefaultValue, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_FloatAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomFloat();
+
+                Assert.Null(await AppSettingsManager.GetFloatAsync(randomKey));
+
+                Assert.True(await AppSettingsManager.SetFloatAsync(randomKey, randomValue));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetFloatAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_FloatAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomFloat();
+
+                Assert.Null(await AppSettingsManager.GetFloatAsync(randomKey, true));
+
+                Assert.True(await AppSettingsManager.SetFloatAsync(randomKey, randomValue, true));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetFloatAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_FloatAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomFloat();
+
+                Assert.Null(await AppSettingsManager.GetFloatAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetFloatAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_IntAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomInt();
+
+                Assert.Null(await AppSettingsManager.GetIntAsync(randomKey));
+
+                Assert.True(await AppSettingsManager.SetIntAsync(randomKey, randomValue));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetIntAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_IntAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomInt();
+
+                Assert.Null(await AppSettingsManager.GetIntAsync(randomKey, true));
+
+                Assert.True(await AppSettingsManager.SetIntAsync(randomKey, randomValue, true));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetIntAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_IntAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomInt();
+
+                Assert.Null(await AppSettingsManager.GetIntAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetIntAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_LongAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomLong();
+
+                Assert.Null(await AppSettingsManager.GetLongAsync(randomKey));
+
+                Assert.True(await AppSettingsManager.SetLongAsync(randomKey, randomValue));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetLongAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_LongAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomLong();
+
+                Assert.Null(await AppSettingsManager.GetLongAsync(randomKey, true));
+
+                Assert.True(await AppSettingsManager.SetLongAsync(randomKey, randomValue, true));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetLongAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_LongAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomLong();
+
+                Assert.Null(await AppSettingsManager.GetLongAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetLongAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_ShortAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomShort();
+
+                Assert.Null(await AppSettingsManager.GetShortAsync(randomKey));
+
+                Assert.True(await AppSettingsManager.SetShortAsync(randomKey, randomValue));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetShortAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_ShortAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomShort();
+
+                Assert.Null(await AppSettingsManager.GetShortAsync(randomKey, true));
+
+                Assert.True(await AppSettingsManager.SetShortAsync(randomKey, randomValue, true));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetShortAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_ShortAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomShort();
+
+                Assert.Null(await AppSettingsManager.GetShortAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetShortAsync(randomKey, randomValue));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_StringAsync_NoEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomString();
+
+                Assert.Null(await AppSettingsManager.GetStringAsync(randomKey));
+
+                Assert.True(await AppSettingsManager.SetStringAsync(randomKey, randomValue));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetStringAsync(randomKey));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_StringAsync_GotEncryption()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomString();
+
+                Assert.Null(await AppSettingsManager.GetStringAsync(randomKey, true));
+
+                Assert.True(await AppSettingsManager.SetStringAsync(randomKey, randomValue, true));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetStringAsync(randomKey, true));
+            }
+        }
+
+        [Fact]
+        public async Task AppSettingsManager_StringAsync_DefaultValue()
+        {
+            for (var i = 0; i < _TestRandomRound; i++)
+            {
+                var randomKey = Generator.RandomString();
+                var randomValue = Generator.RandomString();
+
+                Assert.Null(await AppSettingsManager.GetStringAsync(randomKey));
+
+                Assert.Equal(randomValue, await AppSettingsManager.GetStringAsync(randomKey, randomValue));
             }
         }
 
